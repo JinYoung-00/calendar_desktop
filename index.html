@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar & To-Do App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <h1 class="calendar-title" id="calendar-title">2025년 9월</h1>
+                <div class="nav-buttons">
+                    <button class="nav-button" onclick="previousMonth()">‹</button>
+                    <button class="nav-button" onclick="nextMonth()">›</button>
+                </div>
+            </div>
+            
+            <table class="calendar-table">
+                <tr>
+                    <th class="day-header">Sun</th>
+                    <th class="day-header">Mon</th>
+                    <th class="day-header">Tue</th>
+                    <th class="day-header">Wed</th>
+                    <th class="day-header">Thu</th>
+                    <th class="day-header">Fri</th>
+                    <th class="day-header">Sat</th>
+                </tr>
+                <tbody id="calendar-body"></tbody>
+            </table>
+        </div>
+
+        <div class="todo-section">
+            <div class="todo-header-image" id="todo-header-image">
+                <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                <div class="image-placeholder" onclick="document.getElementById('image-upload').click()">
+                    <span>📷 Click to add background image</span>
+                </div>
+            </div>
+            
+            <div class="todo-content">
+                <h2 class="todo-header">To-Do List</h2>
+                <div class="todo-input-container">
+                    <input type="date" class="date-input" id="date-input">
+                    <div class="todo-input-row">
+                        <input type="text" class="todo-input" id="todo-input" placeholder="Add a new task..." onkeypress="handleKeyPress(event)">
+                        <button class="add-button" onclick="addTodo()">Add</button>
+                    </div>
+                </div>
+                <div class="todo-list" id="todo-list"></div>
+                
+                <!-- JSON 기능은 숨김 처리 -->
+                <div class="data-controls" style="display: none;">
+                    <button class="export-button" onclick="exportData()">📥 Export JSON</button>
+                    <button class="import-button" onclick="document.getElementById('import-file').click()">📤 Import JSON</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
