@@ -34,8 +34,13 @@
         <div class="todo-section">
             <div class="todo-header-image" id="todo-header-image">
                 <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                <div class="image-placeholder" onclick="document.getElementById('image-upload').click()">
-                    <span>📷 Click to add background image</span>
+                <div class="todo-header-image" id="todo-header-image" onclick="document.getElementById('image-upload').click()">
+                    <div class="image-placeholder">
+                        <span>📷 Click to add background image</span>
+                    </div>
+                    <div class="image-change-overlay">
+                        <span>🔄 Click to change image</span>
+                    </div>
                 </div>
             </div>
             
