@@ -4,8 +4,10 @@ const path = require('path')
 const createWindow = () => {
   // 1. 새로운 브라우저 창( BrowserWindow)을 생성합니다.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 880,
+    width: 1500,
+    height: 900,
+    resizable: false,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
      contextIsolation: true

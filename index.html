@@ -3,49 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar & To-Do App</title>
+    <title>Calendar & To-Do Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="calendar-section">
             <div class="calendar-header">
-                <h1 class="calendar-title" id="calendar-title">2025년 9월</h1>
+                <h1 class="calendar-title" id="calendar-title">2025년 12월</h1>
                 <div class="nav-buttons">
-                    <button class="nav-button" onclick="previousMonth()">‹</button>
-                    <button class="nav-button" onclick="nextMonth()">›</button>
+                    <button class="nav-button" onclick="previousMonth()">
+                        <span class="material-icons-round">chevron_left</span>
+                    </button>
+                    <button class="nav-button" onclick="nextMonth()">
+                        <span class="material-icons-round">chevron_right</span>
+                    </button>
                 </div>
             </div>
             
-            <table class="calendar-table">
-                <tr>
-                    <th class="day-header">Sun</th>
-                    <th class="day-header">Mon</th>
-                    <th class="day-header">Tue</th>
-                    <th class="day-header">Wed</th>
-                    <th class="day-header">Thu</th>
-                    <th class="day-header">Fri</th>
-                    <th class="day-header">Sat</th>
-                </tr>
-                <tbody id="calendar-body"></tbody>
-            </table>
+            <div class="calendar-grid day-headers">
+                <div class="day-header sunday">Sun</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header saturday">Sat</div>
+            </div>
+            
+            <div class="calendar-grid calendar-body" id="calendar-body"></div>
         </div>
 
         <div class="todo-section">
             <div class="todo-header-image" id="todo-header-image">
                 <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                <div class="todo-header-image" id="todo-header-image" onclick="document.getElementById('image-upload').click()">
-                    <div class="image-placeholder">
-                        <span>📷 Click to add background image</span>
-                    </div>
-                    <div class="image-change-overlay">
-                        <span>🔄 Click to change image</span>
-                    </div>
+                <div class="image-placeholder" onclick="document.getElementById('image-upload').click()">
+                    <span class="material-icons-round">add_photo_alternate</span>
+                    <span>Click to add background image</span>
+                </div>
+                <div class="image-badge">
+                    <span class="material-icons-round">spa</span>
+                    Daily Goal
                 </div>
             </div>
             
             <div class="todo-content">
-                <h2 class="todo-header">To-Do List</h2>
+                <h2 class="todo-header">
+                    To-Do List
+                </h2>
+                
                 <div class="todo-input-container">
                     <input type="date" class="date-input" id="date-input">
                     <div class="todo-input-row">
@@ -53,17 +63,16 @@
                         <button class="add-button" onclick="addTodo()">Add</button>
                     </div>
                 </div>
-                <div class="todo-list" id="todo-list"></div>
                 
-                <!-- JSON 기능은 숨김 처리 -->
-                <div class="data-controls" style="display: none;">
-                    <button class="export-button" onclick="exportData()">📥 Export JSON</button>
-                    <button class="import-button" onclick="document.getElementById('import-file').click()">📤 Import JSON</button>
-                    <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
-                </div>
+                <div class="todo-list" id="todo-list"></div>
             </div>
         </div>
     </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="material-icons-round light-icon">dark_mode</span>
+        <span class="material-icons-round dark-icon">light_mode</span>
+    </button>
 
     <script src="script.js"></script>
 </body>
