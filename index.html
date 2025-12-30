@@ -69,23 +69,47 @@
                     <span class="material-icons-round">add_photo_alternate</span>
                     <span>Click to add background image</span>
                 </div>
-                <button class="theme-toggle" onclick="toggleTheme()">
-                    <span class="material-icons-round light-icon">dark_mode</span>
-                    <span class="material-icons-round dark-icon">light_mode</span>
-                </button>
+                <div class="theme-toggle-container">
+                    <button class="theme-toggle" onclick="toggleThemeMenu()">
+                        <span class="material-icons-round">palette</span>
+                    </button>
+                    <div class="theme-menu" id="theme-menu">
+                        <button class="theme-option" data-theme="pink" onclick="changeTheme('pink')" title="Pink">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);"></div>
+                        </button>
+                        <button class="theme-option" data-theme="yellow" onclick="changeTheme('yellow')" title="Yellow">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);"></div>
+                        </button>
+                        <button class="theme-option" data-theme="green" onclick="changeTheme('green')" title="Green">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);"></div>
+                        </button>
+                        <button class="theme-option" data-theme="blue" onclick="changeTheme('blue')" title="Blue">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);"></div>
+                        </button>
+                        <button class="theme-option" data-theme="purple" onclick="changeTheme('purple')" title="Purple">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);"></div>
+                        </button>
+                        <button class="theme-option" data-theme="beige" onclick="changeTheme('beige')" title="Beige">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);"></div>
+                        </button>
+                        <button class="theme-option" data-theme="dark" onclick="changeTheme('dark')" title="Dark">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #1f2937 0%, #111827 100%);"></div>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="todo-content">
                 <h2 class="todo-header">
-                    To-Do List
+                    할일 목록
                 </h2>
 
                 <div class="todo-input-container">
                     <input type="date" class="date-input" id="date-input">
                     <div class="todo-input-row">
-                        <input type="text" class="todo-input" id="todo-input" placeholder="Add a new task..."
+                        <input type="text" class="todo-input" id="todo-input" placeholder="일정을 추가해주세요..."
                             onkeypress="handleKeyPress(event)">
-                        <button class="add-button" onclick="addTodo()">Add</button>
+                        <button class="add-button" onclick="addTodo()">추가</button>
                     </div>
                 </div>
 

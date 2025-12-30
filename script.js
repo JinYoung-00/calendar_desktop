@@ -24,7 +24,6 @@ function getTodayString() {
 }
 
 function getColorForTodo(text) {
-    // Simple hash function to get consistent color for same text
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
         hash = text.charCodeAt(i) + ((hash << 5) - hash);
@@ -80,7 +79,6 @@ function generateCalendar() {
             dateNumber.textContent = date.getDate();
             cell.appendChild(dateNumber);
 
-            // Add todo items to calendar
             const dateTodos = todos.filter(t => t.date === dateStr);
             if (dateTodos.length > 0) {
                 const todosContainer = document.createElement('div');
@@ -251,6 +249,36 @@ function handleKeyPress(event) {
 
 function updateHeaderImage() {
     const headerDiv = document.getElementById('todo-header-image');
+    const themeMenuHTML = `
+        <div class="theme-toggle-container">
+            <button class="theme-toggle" onclick="toggleThemeMenu()">
+                <span class="material-icons-round">palette</span>
+            </button>
+            <div class="theme-menu" id="theme-menu">
+                <button class="theme-option" data-theme="pink" onclick="changeTheme('pink')" title="Pink">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);"></div>
+                </button>
+                <button class="theme-option" data-theme="yellow" onclick="changeTheme('yellow')" title="Yellow">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);"></div>
+                </button>
+                <button class="theme-option" data-theme="green" onclick="changeTheme('green')" title="Green">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);"></div>
+                </button>
+                <button class="theme-option" data-theme="blue" onclick="changeTheme('blue')" title="Blue">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);"></div>
+                </button>
+                <button class="theme-option" data-theme="purple" onclick="changeTheme('purple')" title="Purple">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);"></div>
+                </button>
+                <button class="theme-option" data-theme="beige" onclick="changeTheme('beige')" title="Beige">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #f5f5dc 0%, #e8e8d0 100%);"></div>
+                </button>
+                <button class="theme-option" data-theme="dark" onclick="changeTheme('dark')" title="Dark">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #1f2937 0%, #111827 100%);"></div>
+                </button>
+            </div>
+        </div>
+    `;
 
     if (headerImage) {
         headerDiv.style.backgroundImage = `url(${headerImage})`;
@@ -261,10 +289,7 @@ function updateHeaderImage() {
                 <span class="material-icons-round">sync</span>
                 <span>Click to change image</span>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <span class="material-icons-round light-icon">dark_mode</span>
-                <span class="material-icons-round dark-icon">light_mode</span>
-            </button>
+            ${themeMenuHTML}
         `;
     } else {
         headerDiv.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
@@ -274,12 +299,18 @@ function updateHeaderImage() {
                 <span class="material-icons-round">add_photo_alternate</span>
                 <span>Click to add background image</span>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <span class="material-icons-round light-icon">dark_mode</span>
-                <span class="material-icons-round dark-icon">light_mode</span>
-            </button>
+            ${themeMenuHTML}
         `;
     }
+    
+    // 활성 테마 표시
+    const savedTheme = localStorage.getItem('color-theme') || 'pink';
+    setTimeout(() => {
+        const activeOption = document.querySelector(`[data-theme="${savedTheme}"]`);
+        if (activeOption) {
+            activeOption.classList.add('active');
+        }
+    }, 100);
 }
 
 function handleImageUpload(event) {
@@ -295,17 +326,36 @@ function handleImageUpload(event) {
     }
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('dark');
-    const isDark = document.body.classList.contains('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+function toggleThemeMenu() {
+    const menu = document.getElementById('theme-menu');
+    if (menu) {
+        menu.classList.toggle('active');
+    }
+}
+
+function changeTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('color-theme', theme);
+    
+    // 활성 테마 표시
+    document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+    });
+    const activeOption = document.querySelector(`[data-theme="${theme}"]`);
+    if (activeOption) {
+        activeOption.classList.add('active');
+    }
+    
+    // 메뉴 닫기
+    const menu = document.getElementById('theme-menu');
+    if (menu) {
+        menu.classList.remove('active');
+    }
 }
 
 function loadTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark');
-    }
+    const savedTheme = localStorage.getItem('color-theme') || 'pink';
+    document.body.setAttribute('data-theme', savedTheme);
 }
 
 function saveData() {
@@ -325,10 +375,19 @@ function loadData() {
         todos = data.todos || [];
         todoId = data.lastTodoId || 0;
         headerImage = data.headerImage || null;
-
         updateHeaderImage();
     }
 }
+
+// 외부 클릭 시 테마 메뉴 닫기
+document.addEventListener('click', (event) => {
+    const menu = document.getElementById('theme-menu');
+    const toggle = document.querySelector('.theme-toggle');
+    
+    if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
+        menu.classList.remove('active');
+    }
+});
 
 // Initialize
 document.getElementById('date-input').value = getTodayString();
