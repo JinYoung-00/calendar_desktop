@@ -112,6 +112,11 @@
                     <div class="todo-input-row">
                         <input type="text" class="todo-input" id="todo-input" placeholder="일정을 추가해주세요..."
                             onkeypress="handleKeyPress(event)">
+                        <div class="color-picker-wrapper">
+                            <button id="current-color-btn" class="current-color-btn"
+                                onclick="toggleColorMenu(event)"></button>
+                            <div id="color-picker-menu" class="color-picker-menu"></div>
+                        </div>
                         <button class="add-button" onclick="addTodo()">추가</button>
                     </div>
                 </div>

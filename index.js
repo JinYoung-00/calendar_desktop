@@ -22,6 +22,7 @@ const createWindow = () => {
       contextIsolation: false
     }
   })
+  //mainWindow.webContents.openDevTools()
 
   // 파일 로드
   mainWindow.loadFile('index.html')
@@ -45,6 +46,32 @@ const createWindow = () => {
   })
 }
 
+// 시작프로그램 설정 함수
+function setAutoLaunch(enable) {
+  // 개발 모드에서는 작동하지 않음
+  if (app.isPackaged) {
+    app.setLoginItemSettings({
+      openAtLogin: enable,
+      openAsHidden: false, // true로 설정하면 최소화 상태로 시작
+      path: process.execPath,
+      args: []
+    })
+    return true
+  } else {
+    console.log('[시작프로그램] 개발 모드에서는 시작프로그램 설정을 사용할 수 없습니다.')
+    return false
+  }
+}
+
+// 현재 시작프로그램 설정 상태 확인
+function isAutoLaunchEnabled() {
+  if (app.isPackaged) {
+    const settings = app.getLoginItemSettings()
+    return settings.openAtLogin
+  }
+  return false
+}
+
 // IPC 이벤트 처리 (메인 프로세스에서 수신)
 ipcMain.on('window-minimize', () => {
   if (mainWindow) mainWindow.minimize()
@@ -54,8 +81,22 @@ ipcMain.on('window-close', () => {
   if (mainWindow) mainWindow.close()
 })
 
+// 시작프로그램 설정 IPC
+ipcMain.on('set-auto-launch', (event, enable) => {
+  const success = setAutoLaunch(enable)
+  event.reply('auto-launch-changed', { success, enabled: isAutoLaunchEnabled() })
+})
+
+// 시작프로그램 상태 확인 IPC
+ipcMain.on('get-auto-launch-status', (event) => {
+  event.reply('auto-launch-status', isAutoLaunchEnabled())
+})
+
 app.whenReady().then(() => {
   createWindow()
+
+  // 앱 시작 시 시작프로그램 설정 (선택사항)
+  // setAutoLaunch(true)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

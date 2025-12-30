@@ -12,6 +12,9 @@ const todoColors = [
     'blue', 'emerald', 'teal', 'red', 'purple', 'fuchsia'
 ];
 
+let selectedTodoColor = 'pink'; // Default color
+
+
 function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -29,6 +32,16 @@ function getColorForTodo(text) {
         hash = text.charCodeAt(i) + ((hash << 5) - hash);
     }
     return todoColors[Math.abs(hash) % todoColors.length];
+}
+
+// 한국어 날짜 헤더 포맷: "2025년 12월 30일 (화)" 형식으로 반환
+function formatKoreanDateHeader(dateObj) {
+    const year = dateObj.getFullYear();
+    const month = dateObj.getMonth() + 1;
+    const day = dateObj.getDate();
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const weekday = weekdays[dateObj.getDay()];
+    return `${year}년 ${month}월 ${day}일 (${weekday})`;
 }
 
 function generateCalendar() {
@@ -84,9 +97,9 @@ function generateCalendar() {
                 const todosContainer = document.createElement('div');
                 todosContainer.className = 'calendar-todos';
 
-                dateTodos.slice(0, 3).forEach(todo => {
+                dateTodos.forEach(todo => {
                     const todoItem = document.createElement('div');
-                    const color = getColorForTodo(todo.text);
+                    const color = todo.color;
                     todoItem.className = `calendar-todo-item todo-color-${color}`;
                     todoItem.textContent = todo.text;
                     todoItem.title = todo.text;
@@ -137,6 +150,7 @@ function addTodo() {
             id: todoId++,
             text: text,
             date: date,
+            color: selectedTodoColor, // Save selected color
             completed: false,
             createdAt: new Date().toISOString()
         });
@@ -149,79 +163,89 @@ function addTodo() {
 
 function renderTodos() {
     const todoList = document.getElementById('todo-list');
+    const selectedDateValue = document.getElementById('date-input').value;
     todoList.innerHTML = '';
 
-    const sortedTodos = [...todos].sort((a, b) => a.date.localeCompare(b.date));
+    // 현재 선택된 날짜의 To-Do만 필터링
+    const filteredTodos = todos.filter(todo => todo.date === selectedDateValue);
 
-    const groupedTodos = {};
-    sortedTodos.forEach(todo => {
-        if (!groupedTodos[todo.date]) {
-            groupedTodos[todo.date] = [];
-        }
-        groupedTodos[todo.date].push(todo);
+    if (filteredTodos.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'empty-msg';
+        emptyMsg.style.textAlign = 'center';
+        emptyMsg.style.padding = '2rem';
+        emptyMsg.style.color = '#9ca3af';
+        emptyMsg.style.fontSize = '0.875rem';
+        emptyMsg.textContent = '해당 날짜에 일정이 없습니다.';
+        todoList.appendChild(emptyMsg);
+        return;
+    }
+
+    const [year, month, day] = selectedDateValue.split('-');
+    const dateObj = new Date(year, month - 1, day);
+    const dateGroup = document.createElement('div');
+    dateGroup.className = 'todo-date-group';
+
+    const dateHeader = document.createElement('h3');
+    dateHeader.className = 'todo-date-header';
+
+    const today = new Date();
+    const isToday = selectedDateValue === formatDate(today);
+
+    // 한국어 날짜 형식: '2025년 12월 30일 (화)'
+    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+    const dateText = dateObj.toLocaleDateString('ko-KR', options);
+
+    if (isToday) {
+        dateHeader.textContent = `오늘, ${dateText}`;
+    } else {
+        dateHeader.textContent = dateText;
+    }
+
+    dateGroup.appendChild(dateHeader);
+
+    filteredTodos.forEach(todo => {
+        const todoItem = document.createElement('div');
+        todoItem.className = 'todo-item';
+
+        const itemContent = document.createElement('div');
+        itemContent.className = 'todo-item-content';
+
+        // 색상 바 추가
+        const colorBar = document.createElement('div');
+        const color = todo.color || 'pink';
+        colorBar.className = `todo-item-color-bar todo-bg-${color}`;
+        todoItem.appendChild(colorBar);
+
+        const leftDiv = document.createElement('div');
+        leftDiv.className = 'todo-item-left';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'todo-checkbox';
+        checkbox.checked = todo.completed;
+        checkbox.onchange = () => toggleTodo(todo.id);
+
+        const text = document.createElement('span');
+        text.className = 'todo-text' + (todo.completed ? ' completed' : '');
+        text.textContent = todo.text;
+
+        leftDiv.appendChild(checkbox);
+        leftDiv.appendChild(text);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-button';
+        deleteBtn.onclick = () => deleteTodo(todo.id);
+        deleteBtn.innerHTML = '<span class="material-icons-round">close</span>';
+
+        itemContent.appendChild(leftDiv);
+        itemContent.appendChild(deleteBtn);
+        todoItem.appendChild(itemContent);
+
+        dateGroup.appendChild(todoItem);
     });
 
-    Object.keys(groupedTodos).forEach(date => {
-        const [year, month, day] = date.split('-');
-        const dateObj = new Date(year, month - 1, day);
-        const dateGroup = document.createElement('div');
-        dateGroup.className = 'todo-date-group';
-
-        const dateHeader = document.createElement('h3');
-        dateHeader.className = 'todo-date-header';
-
-        const today = new Date();
-        const isToday = date === formatDate(today);
-
-        if (isToday) {
-            dateHeader.textContent = `Today, ${day} ${dateObj.toLocaleDateString('en-US', { month: 'short' })}`;
-        } else {
-            dateHeader.textContent = dateObj.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                weekday: 'short'
-            });
-        }
-
-        dateGroup.appendChild(dateHeader);
-
-        groupedTodos[date].forEach(todo => {
-            const todoItem = document.createElement('div');
-            todoItem.className = 'todo-item';
-
-            const itemContent = document.createElement('div');
-            itemContent.className = 'todo-item-content';
-
-            const leftDiv = document.createElement('div');
-            leftDiv.className = 'todo-item-left';
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'todo-checkbox';
-            checkbox.checked = todo.completed;
-            checkbox.onchange = () => toggleTodo(todo.id);
-
-            const text = document.createElement('span');
-            text.className = 'todo-text' + (todo.completed ? ' completed' : '');
-            text.textContent = todo.text;
-
-            leftDiv.appendChild(checkbox);
-            leftDiv.appendChild(text);
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-button';
-            deleteBtn.onclick = () => deleteTodo(todo.id);
-            deleteBtn.innerHTML = '<span class="material-icons-round">close</span>';
-
-            itemContent.appendChild(leftDiv);
-            itemContent.appendChild(deleteBtn);
-            todoItem.appendChild(itemContent);
-
-            dateGroup.appendChild(todoItem);
-        });
-
-        todoList.appendChild(dateGroup);
-    });
+    todoList.appendChild(dateGroup);
 }
 
 function toggleTodo(id) {
@@ -302,7 +326,7 @@ function updateHeaderImage() {
             ${themeMenuHTML}
         `;
     }
-    
+
     // 활성 테마 표시
     const savedTheme = localStorage.getItem('color-theme') || 'pink';
     setTimeout(() => {
@@ -336,7 +360,7 @@ function toggleThemeMenu() {
 function changeTheme(theme) {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('color-theme', theme);
-    
+
     // 활성 테마 표시
     document.querySelectorAll('.theme-option').forEach(option => {
         option.classList.remove('active');
@@ -345,7 +369,7 @@ function changeTheme(theme) {
     if (activeOption) {
         activeOption.classList.add('active');
     }
-    
+
     // 메뉴 닫기
     const menu = document.getElementById('theme-menu');
     if (menu) {
@@ -373,24 +397,76 @@ function loadData() {
     if (saved) {
         const data = JSON.parse(saved);
         todos = data.todos || [];
+
+        // 기존 데이터 마이그레이션: 색상이 없는 경우 'pink'로 지정
+        let migrated = false;
+        todos = todos.map(todo => {
+            if (!todo.color) {
+                todo.color = 'pink';
+                migrated = true;
+            }
+            return todo;
+        });
+
+        if (migrated) {
+            saveData();
+        }
+
         todoId = data.lastTodoId || 0;
         headerImage = data.headerImage || null;
         updateHeaderImage();
     }
 }
 
-// 외부 클릭 시 테마 메뉴 닫기
+// 외부 클릭 시 메뉴들 닫기
 document.addEventListener('click', (event) => {
-    const menu = document.getElementById('theme-menu');
-    const toggle = document.querySelector('.theme-toggle');
-    
-    if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
-        menu.classList.remove('active');
+    // 테마 메뉴 처리
+    const themeMenu = document.getElementById('theme-menu');
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeMenu && themeToggle && !themeMenu.contains(event.target) && !themeToggle.contains(event.target)) {
+        themeMenu.classList.remove('active');
+    }
+
+    // 색상 선택기 메뉴 처리
+    const colorMenu = document.getElementById('color-picker-menu');
+    const colorToggle = document.getElementById('current-color-btn');
+    if (colorMenu && colorToggle && !colorMenu.contains(event.target) && !colorToggle.contains(event.target)) {
+        colorMenu.classList.remove('active');
     }
 });
 
+function toggleColorMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('color-picker-menu');
+    menu.classList.toggle('active');
+}
+
+function renderColorPicker() {
+    const menu = document.getElementById('color-picker-menu');
+    const trigger = document.getElementById('current-color-btn');
+
+    // 버튼 배경색 업데이트
+    trigger.className = `current-color-btn todo-bg-${selectedTodoColor}`;
+
+    menu.innerHTML = '';
+    todoColors.forEach(color => {
+        const option = document.createElement('button');
+        option.className = `color-option todo-bg-${color}${selectedTodoColor === color ? ' active' : ''}`;
+        option.onclick = () => {
+            selectedTodoColor = color;
+            renderColorPicker();
+            menu.classList.remove('active');
+        };
+        menu.appendChild(option);
+    });
+}
+
 // Initialize
-document.getElementById('date-input').value = getTodayString();
+const dateInput = document.getElementById('date-input');
+dateInput.value = getTodayString();
+dateInput.addEventListener('input', renderTodos);
+
+renderColorPicker(); // Initialize color picker
 loadTheme();
 loadData();
 generateCalendar();

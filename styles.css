@@ -379,8 +379,23 @@ body[data-theme="dark"] .calendar-cell.today .date-number {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    overflow: hidden;
+    overflow-y: auto;
     flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(113, 113, 133, 0.2) transparent;
+}
+
+.calendar-todos::-webkit-scrollbar {
+    width: 4px;
+}
+
+.calendar-todos::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.calendar-todos::-webkit-scrollbar-thumb {
+    background-color: rgba(113, 113, 133, 0.2);
+    border-radius: 10px;
 }
 
 .calendar-todo-item {
@@ -395,6 +410,7 @@ body[data-theme="dark"] .calendar-cell.today .date-number {
     transition: all 0.2s ease;
     border: 1px solid;
     line-height: 1.3;
+    min-height: 20px;
 }
 
 .calendar-todo-item:hover {
@@ -534,6 +550,52 @@ body[data-theme="dark"] .todo-color-fuchsia {
     border-color: rgba(217, 70, 239, 0.5);
 }
 
+/* Todo Color Backgrounds (for picker and side bars) */
+.todo-bg-pink {
+    background-color: #FB7185;
+}
+
+.todo-bg-amber {
+    background-color: #FBBF24;
+}
+
+.todo-bg-orange {
+    background-color: #F97316;
+}
+
+.todo-bg-indigo {
+    background-color: #6366F1;
+}
+
+.todo-bg-rose {
+    background-color: #E11D48;
+}
+
+.todo-bg-blue {
+    background-color: #3B82F6;
+}
+
+.todo-bg-emerald {
+    background-color: #10B981;
+}
+
+.todo-bg-teal {
+    background-color: #14B8A6;
+}
+
+.todo-bg-red {
+    background-color: #EF4444;
+}
+
+.todo-bg-purple {
+    background-color: #A855F7;
+}
+
+.todo-bg-fuchsia {
+    background-color: #D946EF;
+}
+
+
 .todo-section {
     min-width: 300px;
     max-width: 450px;
@@ -543,8 +605,10 @@ body[data-theme="dark"] .todo-color-fuchsia {
     box-shadow: 0 10px 25px -5px rgba(113, 113, 133, 0.15), 0 8px 10px -6px rgba(113, 113, 133, 0.1);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: hidden; */
+    /* 메뉴를 가리지 않도록 제거 */
     height: 100%;
+    position: relative;
 }
 
 body[data-theme="dark"] .todo-section {
@@ -560,6 +624,8 @@ body[data-theme="dark"] .todo-section {
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
+    border-radius: 1.5rem 1.5rem 0 0;
+    /* 상단 라운드 유지 */
 }
 
 .image-placeholder {
@@ -618,8 +684,11 @@ body[data-theme="dark"] .todo-section {
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
-    overflow: hidden;
+    /* overflow: hidden; */
+    /* 메뉴 가림 방지 */
     min-height: 0;
+    position: relative;
+    z-index: 5;
 }
 
 .todo-header {
@@ -718,6 +787,82 @@ body[data-theme="dark"] .todo-input {
     transform: scale(0.95);
 }
 
+/* Color Picker Toggle */
+.color-picker-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.current-color-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    border: 2px solid white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.current-color-btn:hover {
+    transform: scale(1.1);
+}
+
+.color-picker-menu {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    right: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 100;
+}
+
+body[data-theme="dark"] .color-picker-menu {
+    background: rgba(31, 41, 55, 0.95);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.color-picker-menu.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.color-option {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+
+.color-option:hover {
+    transform: scale(1.2);
+}
+
+.color-option.active {
+    border-color: #6b7280;
+    transform: scale(1.1);
+}
+
+body[data-theme="dark"] .color-option.active {
+    border-color: #e5e7eb;
+}
+
+
 .todo-list {
     flex: 1;
     overflow-y: auto;
@@ -743,11 +888,14 @@ body[data-theme="dark"] .todo-date-header {
 
 .todo-item {
     background: #f9fafb;
-    border: 1px solid transparent;
+    border: 1px solid #f3f4f6;
     border-radius: 0.75rem;
-    padding: 0.25rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
     transition: all 0.2s ease;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 body[data-theme="dark"] .todo-item {
@@ -755,12 +903,20 @@ body[data-theme="dark"] .todo-item {
     border-color: #374151;
 }
 
+.todo-item-color-bar {
+    width: 5px;
+    align-self: stretch;
+    flex-shrink: 0;
+}
+
+
+
 .todo-item-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    flex: 1;
     transition: all 0.2s ease;
 }
 
@@ -801,13 +957,49 @@ body[data-theme="dark"] .todo-text {
     color: #d1d5db;
 }
 
-.todo-text.completed {
+.todo-item.completed {
+    padding: 0.22rem 0.5rem;
+    /* 배경을 돋보이게 하기 위한 패딩 */
+    border-radius: 0.375rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.todo-item.completed .todo-text {
     text-decoration: line-through;
     color: #9ca3af;
 }
 
-body[data-theme="dark"] .todo-text.completed {
-    color: #6b7280;
+/* 테마별 완료 항목 배경 */
+body[data-theme="pink"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(252, 231, 243, 0.35), rgba(251, 207, 232, 0.35));
+}
+
+body[data-theme="yellow"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(254, 243, 199, 0.35), rgba(253, 230, 138, 0.35));
+}
+
+body[data-theme="green"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(209, 250, 229, 0.35), rgba(167, 243, 208, 0.35));
+}
+
+body[data-theme="blue"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(219, 234, 254, 0.35), rgba(191, 219, 254, 0.35));
+}
+
+body[data-theme="purple"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(243, 232, 255, 0.35), rgba(233, 213, 255, 0.35));
+}
+
+body[data-theme="beige"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(245, 245, 220, 0.25), rgba(232, 232, 208, 0.25));
+}
+
+body[data-theme="dark"] .todo-item.completed {
+    background: linear-gradient(90deg, rgba(55, 65, 81, 0.25), rgba(31, 41, 55, 0.25));
+}
+
+body[data-theme="dark"] .todo-item.completed .todo-text {
+    color: #d1d5db;
 }
 
 .delete-button {
