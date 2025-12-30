@@ -33,22 +33,16 @@ const createWindow = () => {
 
   // 포커스 상태에 따라 타이틀바 표시/숨김
   mainWindow.on('focus', () => {
-    console.log('[메인 프로세스] 윈도우 포커스 받음')
     if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
       mainWindow.webContents.send('window-focused')
-      console.log('[메인 프로세스] window-focused 메시지 전송')
     }
   })
 
   mainWindow.on('blur', () => {
-    console.log('[메인 프로세스] 윈도우 포커스 잃음')
     if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
       mainWindow.webContents.send('window-blurred')
-      console.log('[메인 프로세스] window-blurred 메시지 전송')
     }
   })
-
-  //mainWindow.webContents.openDevTools()
 }
 
 // IPC 이벤트 처리 (메인 프로세스에서 수신)
