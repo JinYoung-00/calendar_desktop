@@ -2,6 +2,11 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
+// 설치/제거 시 단축아이콘 생성 등 작업을 위한 처리
+if (require('electron-squirrel-startup')) {
+  app.quit();
+}
+
 let mainWindow;
 
 const createWindow = () => {
