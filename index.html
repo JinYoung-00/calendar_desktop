@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="titlebar.css">
 </head>
+
 <body>
+    <!-- 커스텀 타이틀바 -->
+    <div class="custom-titlebar">
+        <div class="titlebar-drag-region">
+            <div class="titlebar-icon">📅</div>
+            <div class="titlebar-title">Yon Calendar & To-Do</div>
+        </div>
+        <div class="titlebar-controls">
+            <button class="titlebar-button minimize-button" id="minimize-btn">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                    <rect x="0" y="5" width="12" height="2" fill="currentColor" />
+                </svg>
+            </button>
+            <button class="titlebar-button close-button" id="close-btn">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="calendar-section">
             <div class="calendar-header">
@@ -24,7 +47,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="calendar-grid day-headers">
                 <div class="day-header sunday">Sun</div>
                 <div class="day-header">Mon</div>
@@ -34,46 +57,47 @@
                 <div class="day-header">Fri</div>
                 <div class="day-header saturday">Sat</div>
             </div>
-            
+
             <div class="calendar-grid calendar-body" id="calendar-body"></div>
         </div>
 
         <div class="todo-section">
             <div class="todo-header-image" id="todo-header-image">
-                <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                <input type="file" id="image-upload" accept="image/*" style="display: none;"
+                    onchange="handleImageUpload(event)">
                 <div class="image-placeholder" onclick="document.getElementById('image-upload').click()">
                     <span class="material-icons-round">add_photo_alternate</span>
                     <span>Click to add background image</span>
                 </div>
-                <div class="image-badge">
-                    <span class="material-icons-round">spa</span>
-                    Daily Goal
-                </div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span class="material-icons-round light-icon">dark_mode</span>
+                    <span class="material-icons-round dark-icon">light_mode</span>
+                </button>
             </div>
-            
+
             <div class="todo-content">
                 <h2 class="todo-header">
                     To-Do List
                 </h2>
-                
+
                 <div class="todo-input-container">
                     <input type="date" class="date-input" id="date-input">
                     <div class="todo-input-row">
-                        <input type="text" class="todo-input" id="todo-input" placeholder="Add a new task..." onkeypress="handleKeyPress(event)">
+                        <input type="text" class="todo-input" id="todo-input" placeholder="Add a new task..."
+                            onkeypress="handleKeyPress(event)">
                         <button class="add-button" onclick="addTodo()">Add</button>
                     </div>
                 </div>
-                
+
                 <div class="todo-list" id="todo-list"></div>
             </div>
         </div>
     </div>
 
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <span class="material-icons-round light-icon">dark_mode</span>
-        <span class="material-icons-round dark-icon">light_mode</span>
-    </button>
+
 
     <script src="script.js"></script>
+    <script src="titlebar.js"></script>
 </body>
+
 </html>

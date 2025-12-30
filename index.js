@@ -1,33 +1,62 @@
-const { app, BrowserWindow } = require('electron')
+// index.js - Electron 메인 프로세스
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
+let mainWindow;
+
 const createWindow = () => {
-  // 1. 새로운 브라우저 창( BrowserWindow)을 생성합니다.
-  const mainWindow = new BrowserWindow({
+  // 메인 윈도우 (캘린더) - index.html 로드
+  mainWindow = new BrowserWindow({
     width: 1500,
     height: 900,
+    frame: false,
     resizable: false,
-    autoHideMenuBar: true,
     webPreferences: {
-      nodeIntegration: false,
-     contextIsolation: true
+      nodeIntegration: true,
+      contextIsolation: false
     }
   })
 
-  // 2. 생성된 창에 원하는 HTML 파일을 로드합니다.
-  // 로컬 파일을 로드할 때는 loadFile()을 사용합니다.
-  mainWindow.loadFile('index.html') 
+  // 파일 로드
+  mainWindow.loadFile('index.html')
 
-  // 개발 시 유용: 개발자 도구를 엽니다.
+  // 메인 윈도우가 닫히면 정리
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
+
+  // 포커스 상태에 따라 타이틀바 표시/숨김
+  mainWindow.on('focus', () => {
+    console.log('[메인 프로세스] 윈도우 포커스 받음')
+    if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
+      mainWindow.webContents.send('window-focused')
+      console.log('[메인 프로세스] window-focused 메시지 전송')
+    }
+  })
+
+  mainWindow.on('blur', () => {
+    console.log('[메인 프로세스] 윈도우 포커스 잃음')
+    if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
+      mainWindow.webContents.send('window-blurred')
+      console.log('[메인 프로세스] window-blurred 메시지 전송')
+    }
+  })
+
   mainWindow.webContents.openDevTools()
 }
 
-// 3. Electron 앱이 준비되었을 때(ready 이벤트) 창을 생성합니다.
+// IPC 이벤트 처리 (메인 프로세스에서 수신)
+ipcMain.on('window-minimize', () => {
+  if (mainWindow) mainWindow.minimize()
+})
+
+ipcMain.on('window-close', () => {
+  if (mainWindow) mainWindow.close()
+})
+
 app.whenReady().then(() => {
   createWindow()
 
-  // macOS에서는 애플리케이션이 활성화되었을 때(독 아이콘 클릭 등) 
-  // 열린 창이 없으면 새 창을 다시 만드는 것이 일반적입니다.
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
@@ -35,9 +64,6 @@ app.whenReady().then(() => {
   })
 })
 
-// 4. 모든 창이 닫히면 앱을 종료합니다.
-// macOS는 사용자가 Command + Q로 명시적으로 종료할 때까지 
-// 애플리케이션이 활성 상태로 유지되는 것이 일반적입니다.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()

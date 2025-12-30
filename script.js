@@ -8,7 +8,7 @@ let headerImage = null;
 
 // Todo color palette
 const todoColors = [
-    'pink', 'amber', 'orange', 'indigo', 'rose', 
+    'pink', 'amber', 'orange', 'indigo', 'rose',
     'blue', 'emerald', 'teal', 'red', 'purple', 'fuchsia'
 ];
 
@@ -40,33 +40,33 @@ function generateCalendar() {
 
     const calendarBody = document.getElementById('calendar-body');
     const title = document.getElementById('calendar-title');
-    
+
     title.textContent = `${currentYear}년 ${currentMonth + 1}월`;
     calendarBody.innerHTML = '';
 
     const today = new Date();
     const todayStr = formatDate(today);
-    
+
     for (let week = 0; week < 6; week++) {
         for (let day = 0; day < 7; day++) {
             const date = new Date(startDate);
             date.setDate(startDate.getDate() + (week * 7) + day);
             const dateStr = formatDate(date);
-            
+
             const cell = document.createElement('div');
             cell.className = 'calendar-cell';
             cell.onclick = () => selectDate(dateStr);
-            
+
             if (date.getMonth() !== currentMonth) {
                 cell.classList.add('other-month');
             }
-            
+
             if (day === 0) {
                 cell.classList.add('sunday');
             } else if (day === 6) {
                 cell.classList.add('saturday');
             }
-            
+
             if (dateStr === todayStr) {
                 cell.classList.add('today');
             }
@@ -74,18 +74,18 @@ function generateCalendar() {
             if (dateStr === selectedDate) {
                 cell.classList.add('selected');
             }
-            
+
             const dateNumber = document.createElement('div');
             dateNumber.className = 'date-number';
             dateNumber.textContent = date.getDate();
             cell.appendChild(dateNumber);
-            
+
             // Add todo items to calendar
             const dateTodos = todos.filter(t => t.date === dateStr);
             if (dateTodos.length > 0) {
                 const todosContainer = document.createElement('div');
                 todosContainer.className = 'calendar-todos';
-                
+
                 dateTodos.slice(0, 3).forEach(todo => {
                     const todoItem = document.createElement('div');
                     const color = getColorForTodo(todo.text);
@@ -94,10 +94,10 @@ function generateCalendar() {
                     todoItem.title = todo.text;
                     todosContainer.appendChild(todoItem);
                 });
-                
+
                 cell.appendChild(todosContainer);
             }
-            
+
             calendarBody.appendChild(cell);
         }
     }
@@ -133,7 +133,7 @@ function addTodo() {
     const dateInput = document.getElementById('date-input');
     const text = input.value.trim();
     const date = dateInput.value || getTodayString();
-    
+
     if (text) {
         todos.push({
             id: todoId++,
@@ -152,9 +152,9 @@ function addTodo() {
 function renderTodos() {
     const todoList = document.getElementById('todo-list');
     todoList.innerHTML = '';
-    
+
     const sortedTodos = [...todos].sort((a, b) => a.date.localeCompare(b.date));
-    
+
     const groupedTodos = {};
     sortedTodos.forEach(todo => {
         if (!groupedTodos[todo.date]) {
@@ -162,66 +162,66 @@ function renderTodos() {
         }
         groupedTodos[todo.date].push(todo);
     });
-    
+
     Object.keys(groupedTodos).forEach(date => {
         const [year, month, day] = date.split('-');
         const dateObj = new Date(year, month - 1, day);
         const dateGroup = document.createElement('div');
         dateGroup.className = 'todo-date-group';
-        
+
         const dateHeader = document.createElement('h3');
         dateHeader.className = 'todo-date-header';
-        
+
         const today = new Date();
         const isToday = date === formatDate(today);
-        
+
         if (isToday) {
             dateHeader.textContent = `Today, ${day} ${dateObj.toLocaleDateString('en-US', { month: 'short' })}`;
         } else {
-            dateHeader.textContent = dateObj.toLocaleDateString('en-US', { 
-                month: 'short', 
+            dateHeader.textContent = dateObj.toLocaleDateString('en-US', {
+                month: 'short',
                 day: 'numeric',
                 weekday: 'short'
             });
         }
-        
+
         dateGroup.appendChild(dateHeader);
-        
+
         groupedTodos[date].forEach(todo => {
             const todoItem = document.createElement('div');
             todoItem.className = 'todo-item';
-            
+
             const itemContent = document.createElement('div');
             itemContent.className = 'todo-item-content';
-            
+
             const leftDiv = document.createElement('div');
             leftDiv.className = 'todo-item-left';
-            
+
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.className = 'todo-checkbox';
             checkbox.checked = todo.completed;
             checkbox.onchange = () => toggleTodo(todo.id);
-            
+
             const text = document.createElement('span');
             text.className = 'todo-text' + (todo.completed ? ' completed' : '');
             text.textContent = todo.text;
-            
+
             leftDiv.appendChild(checkbox);
             leftDiv.appendChild(text);
-            
+
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-button';
             deleteBtn.onclick = () => deleteTodo(todo.id);
             deleteBtn.innerHTML = '<span class="material-icons-round">close</span>';
-            
+
             itemContent.appendChild(leftDiv);
             itemContent.appendChild(deleteBtn);
             todoItem.appendChild(itemContent);
-            
+
             dateGroup.appendChild(todoItem);
         });
-        
+
         todoList.appendChild(dateGroup);
     });
 }
@@ -251,8 +251,7 @@ function handleKeyPress(event) {
 
 function updateHeaderImage() {
     const headerDiv = document.getElementById('todo-header-image');
-    const badge = headerDiv.querySelector('.image-badge');
-    
+
     if (headerImage) {
         headerDiv.style.backgroundImage = `url(${headerImage})`;
         headerDiv.style.background = `url(${headerImage}) center/cover`;
@@ -262,10 +261,10 @@ function updateHeaderImage() {
                 <span class="material-icons-round">sync</span>
                 <span>Click to change image</span>
             </div>
-            <div class="image-badge">
-                <span class="material-icons-round">spa</span>
-                Daily Goal
-            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-icons-round light-icon">dark_mode</span>
+                <span class="material-icons-round dark-icon">light_mode</span>
+            </button>
         `;
     } else {
         headerDiv.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
@@ -275,10 +274,10 @@ function updateHeaderImage() {
                 <span class="material-icons-round">add_photo_alternate</span>
                 <span>Click to add background image</span>
             </div>
-            <div class="image-badge">
-                <span class="material-icons-round">spa</span>
-                Daily Goal
-            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-icons-round light-icon">dark_mode</span>
+                <span class="material-icons-round dark-icon">light_mode</span>
+            </button>
         `;
     }
 }
@@ -287,7 +286,7 @@ function handleImageUpload(event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             headerImage = e.target.result;
             updateHeaderImage();
             saveData();
@@ -326,7 +325,7 @@ function loadData() {
         todos = data.todos || [];
         todoId = data.lastTodoId || 0;
         headerImage = data.headerImage || null;
-        
+
         updateHeaderImage();
     }
 }

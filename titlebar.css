@@ -1,0 +1,99 @@
+/* 커스텀 타이틀바 */
+.custom-titlebar {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+body.dark .custom-titlebar {
+    background: linear-gradient(to bottom, #1f2937, #111827);
+    border-bottom: 1px solid #374151;
+}
+
+.custom-titlebar.visible {
+    opacity: 1;
+}
+
+.titlebar-drag-region {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    height: 100%;
+    -webkit-app-region: drag;
+    /* 드래그 가능 영역 */
+    padding-left: 12px;
+    gap: 8px;
+}
+
+.titlebar-icon {
+    font-size: 14px;
+    user-select: none;
+}
+
+.titlebar-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    user-select: none;
+}
+
+body.dark .titlebar-title {
+    color: #e5e7eb;
+}
+
+.titlebar-controls {
+    display: flex;
+    height: 100%;
+    -webkit-app-region: no-drag;
+    /* 버튼은 드래그 불가 */
+}
+
+.titlebar-button {
+    width: 46px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: all 0.15s ease;
+}
+
+body.dark .titlebar-button {
+    color: #9ca3af;
+}
+
+.titlebar-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.dark .titlebar-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.minimize-button:hover {
+    background: rgba(0, 122, 255, 0.1);
+    color: #007aff;
+}
+
+.close-button:hover {
+    background: #e81123;
+    color: white;
+}
+
+.titlebar-button svg {
+    pointer-events: none;
+}
