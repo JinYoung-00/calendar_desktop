@@ -56,6 +56,7 @@ npm run make
 ## 👤 작성자 (Author)
 
 **miryuru**
+(장진영)
 
 ## 📄 라이선스 (License)
 
