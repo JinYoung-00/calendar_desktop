@@ -11,6 +11,7 @@ const createWindow = () => {
     height: 900,
     frame: false,
     resizable: true,
+    icon: path.join(__dirname, 'icon/calendar_icon.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -42,7 +43,7 @@ const createWindow = () => {
     }
   })
 
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 }
 
 // IPC 이벤트 처리 (메인 프로세스에서 수신)

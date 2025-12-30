@@ -535,7 +535,9 @@ body[data-theme="dark"] .todo-color-fuchsia {
 }
 
 .todo-section {
-    width: 400px;
+    min-width: 300px;
+    max-width: 450px;
+    flex: 1;
     background: var(--surface-light);
     border-radius: 1.5rem;
     box-shadow: 0 10px 25px -5px rgba(113, 113, 133, 0.15), 0 8px 10px -6px rgba(113, 113, 133, 0.1);
