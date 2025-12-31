@@ -9,7 +9,7 @@ let headerImage = null;
 // Todo color palette
 const todoColors = [
     'pink', 'amber', 'orange', 'indigo', 'rose',
-    'blue', 'emerald', 'teal', 'red', 'purple', 'fuchsia'
+    'blue', 'emerald', 'teal', 'purple', 'fuchsia'
 ];
 
 let selectedTodoColor = 'pink'; // Default color
@@ -398,11 +398,14 @@ function loadData() {
         const data = JSON.parse(saved);
         todos = data.todos || [];
 
-        // 기존 데이터 마이그레이션: 색상이 없는 경우 'pink'로 지정
-        let migrated = false;
-        todos = todos.map(todo => {
-            if (!todo.color) {
-                todo.color = 'pink';
+// 기존 데이터 마이그레이션: 색상이 없는 경우 'pink'로 지정, 'red'는 'blue'로 마이그레이션
+let migrated = false;
+todos = todos.map(todo => {
+    if (!todo.color) {
+        todo.color = 'pink';
+        migrated = true;
+    } else if (todo.color === 'red') {
+        todo.color = 'blue';
                 migrated = true;
             }
             return todo;
